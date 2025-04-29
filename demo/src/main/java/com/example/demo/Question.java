@@ -1,35 +1,38 @@
 package com.example.demo;
 
-import java.time.LocalDateTime; 
-import java.util.List; 
+import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import jakarta.persistence.CascadeType; 
-import jakarta.persistence.Column; 
-import jakarta.persistence.Entity; 
-import jakarta.persistence.GeneratedValue; 
-import jakarta.persistence.GenerationType; 
-import jakarta.persistence.Id; 
-import jakarta.persistence.OneToMany; 
+@Getter
+@Setter
+@Entity
+public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-import lombok.Getter; 
-import lombok.Setter; 
+    @Column(length = 200)
+    private String subject;
 
-@Getter 
-@Setter 
-@Entity 
-public class Question { 
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private Integer id; 
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
-    @Column(length = 200) 
-    private String subject; 
+    private LocalDateTime createDate;
 
-    @Column(columnDefinition = "TEXT") 
-    private String content; 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answerList;
 
-    private LocalDateTime createDate; 
+    @JsonIgnore
+    public List<Answer> getAnswerList() {
+        return answerList;
+    }
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE) 
-    private List<Answer> answerList; 
+    @PrePersist  // ✅ 질문이 저장되기 전에 자동으로 현재 시간 설정
+    protected void onCreate() {
+        this.createDate = LocalDateTime.now();
+    }
 }
