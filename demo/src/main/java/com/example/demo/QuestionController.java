@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")  // 기본 URL 설정
-@CrossOrigin(origins = "http://localhost:3000")  // CORS 설정 (React와 연동)
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
